@@ -1,4 +1,4 @@
-const API_DOMAIN="http://localhost:3000/";
+const API_DOMAIN="https://5pswz2-3000.csb.app/";
 export const get=async(path)=>{
     const response = await fetch(API_DOMAIN+path);
     const result = await response.json();
