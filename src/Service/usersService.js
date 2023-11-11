@@ -28,6 +28,10 @@ export const editProfile = async (id, option) => {
     return result;
 }
 
+export const createProfile = async (option) => {
+    const result =await post(`infocustomer`,option)
+    return result;
+}
 export const createTicket = async (option) => {
     const result =await post(`tickets`,option)
     return result;

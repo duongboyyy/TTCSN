@@ -3,7 +3,8 @@ import { login } from "../../Service/usersService";
 import { setCookie } from "../../helper/cookie";
 import { useDispatch } from "react-redux";
 import { checkLogin } from "../../actions/Login";
-
+import "./login.scss"
+import { Button } from "antd";
 function Login(){
     const navigate= useNavigate();
     const dispatch= useDispatch();
@@ -26,22 +27,37 @@ function Login(){
             alert("Sai thông tin tài khoản")
         }
     }
+    const handleRegister=()=>{
+        navigate("/register");
+    }
     return (
         <>
-            <form onSubmit={handleSubmit}>
-                <h2>Login</h2>
+        <div className="form"> 
+
+
+        
+            <form onSubmit={handleSubmit} className="form__login">
+                <h2 className="form__header">Đăng nhập</h2>
                 <div>
-                    <input type="text" placeholder="Nhập email"></input>
+                    <p className="form__title">Email</p>
+                    <input type="text" placeholder="Nhập email" className="form__input form__input--email"></input>
                     
                 </div>
                 <div>
-                    
-                    <input type="password" placeholder="Nhập mật khẩu"></input>
+                    <p className="form__title">Mật khẩu</p>
+                    <input type="password" placeholder="Nhập mật khẩu" className="form__input form__input--password"></input>
                 </div>
-                <button type="submit">
-                    Login
-                </button>
+                <div className="form__footer">
+                    <button type="submit" className="form__button form__button--submit">
+                        Login
+                    </button>
+                    <Button className="form__button form__button--register" type="link" onClick={handleRegister}>Bạn chưa có tài khoản?</Button>
+                </div>
+                
+
             </form>
+
+        </div>
         </>
     )
 }
