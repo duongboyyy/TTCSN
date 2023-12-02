@@ -63,7 +63,7 @@ function AddTicket(props) {
                                 idcustomer:checkExitsEmail[0].id,
                                 name:checkExitsEmail[0].name,
                                 time: curDate,
-                                isWatch:false,
+                                isWatch: "false",
                                 status:"default",
                                 response:"",
                             }
@@ -88,7 +88,7 @@ function AddTicket(props) {
                         idcustomer:checkExitsEmail[0].id,
                         name:checkExitsEmail[0].name,
                         time: curDate,
-                        isWatch:false,
+                        isWatch: "false",
                         status:"default",
                         response:"",
                     }
@@ -112,7 +112,7 @@ function AddTicket(props) {
                         idcustomer:checkExitsEmail[0].id,
                         name:checkExitsEmail[0].name,
                         time: curDate,
-                        isWatch:false,
+                        isWatch: "false",
                         status:"default",
                         response:"",
                     }
@@ -131,7 +131,7 @@ function AddTicket(props) {
                 idcustomer:checkExitsEmail[0].id,
                 name:checkExitsEmail[0].name,
                 time: curDate,
-                isWatch:false,
+                isWatch: "false",
                 status:"default",
                 response:"",
             }
