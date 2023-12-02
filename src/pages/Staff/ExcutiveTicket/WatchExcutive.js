@@ -2,7 +2,7 @@ import { Button, Form, Input, Modal, Upload } from "antd";
 import { useState } from "react";
 import { UploadOutlined } from "@ant-design/icons"
 import { FileSearchOutlined } from "@ant-design/icons"
-function WatchDetailTicket(props) {
+function WatchExcutive(props) {
     const { record } = props;
     const [open, setOpen] = useState(false);
     const showModal = () => {
@@ -27,12 +27,12 @@ function WatchDetailTicket(props) {
         },
 
     };
-    //console.log(record.response.title)
+
     return (
         <>
-            <Button type="primary" size="small" onClick={showModal} icon={<FileSearchOutlined />}></Button>
+            <Button type="link" onClick={showModal}>Xem</Button>
             <Modal
-                title="Nội dung phiếu ghi"
+                title="Xử lí phiếu ghi"
                 open={open}
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -65,11 +65,10 @@ function WatchDetailTicket(props) {
                     { (record.response.video !== undefined)?(<video src={record.response.video} controls style={{width: "300px"}}></video>):(<p></p>)
                     
                 }
-
                 </div>
             </Modal>
         </>
     )
 
 }
-export default WatchDetailTicket;
+export default WatchExcutive;

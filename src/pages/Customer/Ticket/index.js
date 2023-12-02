@@ -1,10 +1,11 @@
-import { Button, Form, Input, Table, Upload, message } from "antd";
+import { Badge, Button, Form, Input, Table, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons"
 import { useEffect, useState } from "react";
 import { createTicket, getCostumerList, getCustomerById, getTicketById, getTicketList } from "../../../Service/usersService";
 import { getCookie } from "../../../helper/cookie";
 
 import CreateTicket from "./CreateTicket";
+import WatchDetailTicket from "./WatchDetailTicket";
 function Ticket() {
     const idAccount = getCookie("id");
     const [data, setData] = useState([]);
@@ -52,11 +53,22 @@ function Ticket() {
             render: (_, record) => {
                 return (
                     <>
-
+                        <Badge status={record.status} text={(record.status==="default")? ("Chưa xử lí"):("Đã xử lí")} />
                     </>
                 )
             }
         },
+        {
+            title:'Hành động',
+            key: 'actions',
+            render:(_,record)=>{
+                return(
+                    <>
+                     <WatchDetailTicket record={record}/>
+                    </>
+                )
+            }
+        }
     ]
     return (
         <>

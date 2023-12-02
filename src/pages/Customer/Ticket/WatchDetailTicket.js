@@ -1,7 +1,7 @@
 import { Button, Form, Input, Modal, Upload } from "antd";
 import { useState } from "react";
-import { UploadOutlined } from "@ant-design/icons"
-import { FileSearchOutlined } from "@ant-design/icons"
+import React from 'react'
+import ReactPlayer from 'react-player'
 function WatchDetailTicket(props) {
     const { record } = props;
     const [open, setOpen] = useState(false);
@@ -27,12 +27,12 @@ function WatchDetailTicket(props) {
         },
 
     };
-    //console.log(record.response.title)
+
     return (
         <>
-            <Button type="primary" size="small" onClick={showModal} icon={<FileSearchOutlined />}></Button>
+            <Button type="link" onClick={showModal}>Xem</Button>
             <Modal
-                title="Nội dung phiếu ghi"
+                title="Xử lí phiếu ghi"
                 open={open}
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -45,12 +45,13 @@ function WatchDetailTicket(props) {
                 </div>
                 <div className=" main-from">
                     <p>{record.description}</p>
-                    {(record.image !== undefined) ? (<img src={record.image} style={{ width: "150px" }}></img>) : (<p></p>)
-
-                    }
-                    {(record.video !== undefined) ? (<video src={record.video} controls style={{ width: "300px" }}></video>) : (<p></p>)
-
-                    }
+                    
+                    { (record.image !== undefined)?(<img src={record.image} style={{width: "150px"}}></img>):(<p></p>)
+                    
+                }
+                    { (record.video !== undefined)?(<video src={record.video} controls style={{width: "300px"}}></video>):(<p></p>)
+                    
+                }
                 </div>
 
                 <div className="reponse">
@@ -65,7 +66,6 @@ function WatchDetailTicket(props) {
                     { (record.response.video !== undefined)?(<video src={record.response.video} controls style={{width: "300px"}}></video>):(<p></p>)
                     
                 }
-
                 </div>
             </Modal>
         </>

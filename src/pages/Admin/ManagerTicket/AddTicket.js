@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { roleAccount } from "../../../helper/roleAccount";
 import { Option } from "antd/es/mentions";
 import { checkEmail, checkExits, createTicket, getAccountList, getCostumerList, register } from "../../../Service/usersService";
-import { generateToken } from "../../../helper/generateToken";
-import { UploadOutlined } from "@ant-design/icons"
+import { imageDb } from '../../Home/config';
+import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
+import { v4 } from "uuid";
 
 function AddTicket(props) {
     const { onReload } = props;
@@ -12,7 +13,8 @@ function AddTicket(props) {
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
-
+    const [img, setImg] = useState('');
+    const [mp4, setMp4] = useState('');
     useEffect(() => {
         const fetchApi = async () => {
             const result = await getCostumerList();
@@ -45,21 +47,105 @@ function AddTicket(props) {
     const handleSubmit = async (values) => {
         const checkExitsEmail = await checkEmail("email", values.email);
         if (checkExitsEmail.length > 0) {
-            console.log(checkExitsEmail[0].id)
-            const options = {
+            let data = {};
+        if ((values.image !== undefined) && (values.video !== undefined)) {
+
+            const imgRef = ref(imageDb, `files/${v4()}`);
+            const mp4Ref = ref(imageDb, `videos/${v4()}`);
+            uploadBytes(imgRef, img).then(async (value) => {
+                getDownloadURL(value.ref).then(async (url) => {
+                    values.image = url;
+                    uploadBytes(mp4Ref, mp4).then(async (value1) => {
+                        getDownloadURL(value1.ref).then(async (url1) => {
+                            values.video = url1;
+                            data = {
+                                ...values,
+                                idcustomer:checkExitsEmail[0].id,
+                                name:checkExitsEmail[0].name,
+                                time: curDate,
+                                isWatch:false,
+                                status:"default",
+                                response:"",
+                            }
+                            const response = await createTicket(data);
+                            if (response) {
+                                onReload();
+                                console.log(response)
+                                form.resetFields();
+                            }
+                        })
+                    });
+
+                })
+            });
+        }else if(values.image !== undefined){
+            const imgRef = ref(imageDb, `files/${v4()}`);
+            uploadBytes(imgRef, img).then(async (value) => {
+                getDownloadURL(value.ref).then(async (url) => {
+                    values.image = url;
+                    data = {
+                        ...values,
+                        idcustomer:checkExitsEmail[0].id,
+                        name:checkExitsEmail[0].name,
+                        time: curDate,
+                        isWatch:false,
+                        status:"default",
+                        response:"",
+                    }
+                    const response = await createTicket(data);
+                    if (response) {
+                        onReload();
+                        console.log(response)
+                        form.resetFields();
+                    }
+
+                })
+            });
+        }
+        else if(values.video !== undefined){
+            const mp4Ref = ref(imageDb, `videos/${v4()}`);
+            uploadBytes(mp4Ref, mp4).then(async (value1) => {
+                getDownloadURL(value1.ref).then(async (url1) => {
+                    values.video = url1;
+                    data = {
+                        ...values,
+                        idcustomer:checkExitsEmail[0].id,
+                        name:checkExitsEmail[0].name,
+                        time: curDate,
+                        isWatch:false,
+                        status:"default",
+                        response:"",
+                    }
+                    const response = await createTicket(data);
+                    if (response) {
+                        onReload();
+                        console.log(response)
+                        form.resetFields();
+                    }
+                })
+            });
+        }
+        else {
+            data = {
                 ...values,
                 idcustomer:checkExitsEmail[0].id,
                 name:checkExitsEmail[0].name,
                 time: curDate,
+                isWatch:false,
+                status:"default",
+                response:"",
             }
-            const response = await createTicket(options);
+            const response = await createTicket(data);
             if (response) {
                 onReload();
                 console.log(response)
+                form.resetFields();
             }
 
         }
-        form.resetFields();
+
+        }
+        
 
     }
     return (
@@ -111,17 +197,25 @@ function AddTicket(props) {
                         name="image"
                         label="Ảnh"
                     >
-                        <Upload >
-                            <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                        </Upload>
+                        <div>
+                            <input type="file" accept=".jpg, .png" onChange={(e) => {
+                                
+                                    setImg(e.target.files[0]);
+                                
+                            }} />
+                        </div>
                     </Form.Item>
                     <Form.Item
-                        name="image"
+                        name="video"
                         label="Ảnh"
                     >
-                        <Upload >
-                            <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                        </Upload>
+                        <div>
+                            <input type="file" accept=".mp4" onChange={(e) => {
+
+                                setMp4(e.target.files[0]);
+                                
+                            }} />
+                        </div>
                     </Form.Item>
                     <Form.Item label=" ">
                         <Button type="primary" htmlType="submit" onClick={handleCancel} >

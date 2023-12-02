@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Space, Table, Tag } from 'antd';
+import { Badge, Button, Space, Table, Tag } from 'antd';
 import { getAccountList, getTicketList } from '../../../Service/usersService';
 import AddTicket from './AddTicket';
 import DeleteTicket from './DeleteTicket';
@@ -47,9 +47,7 @@ function ManagerTicket() {
             render: (_, record) => {
                 return (
                     <>
-                        <Tag color={(record.role==="admin")?("volcano"):(record.role==="staff"?("blue"):(""))}>
-                            {record.role}
-                        </Tag>
+                         <Badge status={record.status} text={(record.status==="default")? ("Chưa xử lí"):("Đã xử lí")} />
                     </>
                 )
             }

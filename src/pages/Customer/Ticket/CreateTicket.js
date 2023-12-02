@@ -1,16 +1,21 @@
 import { Alert, Button, Form, Input, Modal, Select, Upload, message } from "antd";
 import { useEffect, useState } from "react";
-import { roleAccount } from "../../../helper/roleAccount";
-import { Option } from "antd/es/mentions";
 import { checkEmail, checkExits, createTicket, getAccountList, getCostumerList, register } from "../../../Service/usersService";
-import { generateToken } from "../../../helper/generateToken";
+
 import { UploadOutlined } from "@ant-design/icons"
 
+import { imageDb } from '../../Home/config';
+import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
+import { v4 } from "uuid";
+
 function CreateTicket(props) {
-    const { onReload ,item} = props;
+    const { onReload, item } = props;
     const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
+
+    const [img, setImg] = useState('');
+    const [mp4, setMp4] = useState('');
     useEffect(() => {
         const fetchApi = async () => {
             const result = await getCostumerList();
@@ -27,7 +32,8 @@ function CreateTicket(props) {
 
     };
     const handleCancel = () => {
-        console.log('Clicked cancel button');
+        setImg('');
+        setMp4('');
         setOpen(false);
     };
     var curDate = new Date();
@@ -41,22 +47,113 @@ function CreateTicket(props) {
 
     };
     const handleSubmit = async (values) => {
-        const data = {
-            ...values,
-            "idcustomer": item[0].id,
-            "time": curDate,
-            "name": item[0].name,
-            "email": item[0].email,
-            "response": ""
-        }
-        const response = await createTicket(data);
-        if (response) {
-            form.resetFields();
-            onReload();
-            handleCancel();
-        }
-        console.log(response);
+        let data = {};
+        if ((values.image !== undefined) && (values.video !== undefined)) {
 
+            const imgRef = ref(imageDb, `files/${v4()}`);
+            const mp4Ref = ref(imageDb, `videos/${v4()}`);
+            uploadBytes(imgRef, img).then(async (value) => {
+                getDownloadURL(value.ref).then(async (url) => {
+                    values.image = url;
+                    uploadBytes(mp4Ref, mp4).then(async (value1) => {
+                        getDownloadURL(value1.ref).then(async (url1) => {
+                            values.video = url1;
+                            data = {
+                                ...values,
+                                "idcustomer": item[0].id,
+                                "time": curDate,
+                                "name": item[0].name,
+                                "email": item[0].email,
+                                "response": "",
+                                "status": "default",
+                                "isWatch": "false"
+                            }
+                            const response = await createTicket(data);
+                            if (response) {
+                                console.log(response)
+                                form.resetFields();
+                                onReload();
+                                handleCancel();
+                                
+                            }
+                        })
+                    });
+
+                })
+            });
+        }else if(values.image !== undefined){
+            const imgRef = ref(imageDb, `files/${v4()}`);
+            uploadBytes(imgRef, img).then(async (value) => {
+                getDownloadURL(value.ref).then(async (url) => {
+                    values.image = url;
+                    data = {
+                        ...values,
+                        "idcustomer": item[0].id,
+                        "time": curDate,
+                        "name": item[0].name,
+                        "email": item[0].email,
+                        "response": "",
+                        "status": "default",
+                        "isWatch": "false"
+                    }
+                    const response = await createTicket(data);
+                    if (response) {
+                        console.log(response)
+                        form.resetFields();
+                        onReload();
+                        handleCancel();
+                        
+                    }
+
+                })
+            });
+        }
+        else if(values.video !== undefined){
+            const mp4Ref = ref(imageDb, `videos/${v4()}`);
+            uploadBytes(mp4Ref, mp4).then(async (value1) => {
+                getDownloadURL(value1.ref).then(async (url1) => {
+                    values.video = url1;
+                    data = {
+                        ...values,
+                        "idcustomer": item[0].id,
+                        "time": curDate,
+                        "name": item[0].name,
+                        "email": item[0].email,
+                        "response": "",
+                        "status": "default",
+                        "isWatch": "false"
+                    }
+                    const response = await createTicket(data);
+                    if (response) {
+                        console.log(response)
+                        form.resetFields();
+                        onReload();
+                        handleCancel();
+                        
+                    }
+                })
+            });
+        }
+        else {
+            data = {
+                ...values,
+                "idcustomer": item[0].id,
+                "time": curDate,
+                "name": item[0].name,
+                "email": item[0].email,
+                "response": "",
+                "status": "default",
+                "isWatch": "false"
+            }
+            const response = await createTicket(data);
+            if (response) {
+                console.log(response)
+                form.resetFields();
+                onReload();
+                handleCancel();
+                
+            }
+        }
     }
     return (
         <>
@@ -100,17 +197,26 @@ function CreateTicket(props) {
                         name="image"
                         label="Ảnh"
                     >
-                        <Upload>
-                            <Button icon={<UploadOutlined />} >Tải ảnh lên</Button>
-                        </Upload>
+
+                        <div>
+                            <input type="file" accept=".jpg, .png" onChange={(e) => {
+                                
+                                    setImg(e.target.files[0]);
+                                
+                            }} />
+                        </div>
                     </Form.Item>
                     <Form.Item
                         name="video"
                         label="Video"
                     >
-                        <Upload >
-                            <Button icon={<UploadOutlined />}>Tải video lên</Button>
-                        </Upload>
+                        <div>
+                            <input type="file" accept=".mp4" onChange={(e) => {
+
+                                setMp4(e.target.files[0]);
+                                
+                            }} />
+                        </div>
                     </Form.Item>
                     <Form.Item label=" ">
                         <Button type="primary" htmlType="submit" >

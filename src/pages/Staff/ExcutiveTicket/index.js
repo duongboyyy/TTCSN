@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tag } from 'antd';
+import { Badge, Space, Table, Tag } from 'antd';
 import { getCostumerList, getTicketList } from '../../../Service/usersService';
 import FormExcutive from './FormExcutive';
 import EditAccount from '../../Admin/ManagerAccount/EditAccount';
+import WatchExcutive from './WatchExcutive';
 
 function ExcutiveTiket(){
     
@@ -44,12 +45,33 @@ function ExcutiveTiket(){
             key: 'time',
         },
         {
+            title:'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            render: (_, record) => {
+                return (
+                    <>
+                        <Badge status={record.status} text={(record.status==="default")? ("Chưa xử lí"):("Đã xử lí")} />
+                        <>
+                        <br></br>
+                        </>
+                        <Tag color={(record.isWatch==="false")?("volcano"):("")}>
+                            {(record.isWatch==="false")?("Mới"):("Đã xem")}
+                        </Tag>
+                    </>
+                )
+            }
+        },
+        {
             title:'Hành động',
             key: 'actions',
             render:(_,record)=>{
                 return(
                     <>
-                    <FormExcutive record={record}/>
+                        {(record.status==="default")?(
+                            <FormExcutive record={record} onReload={handleReload}/>
+                        ):(<WatchExcutive record={record}/>)}
+                        
                     </>
                 )
             }
